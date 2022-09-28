@@ -16,3 +16,21 @@
     padding-top: 20px;
     padding-bottom: 20px;
 }
+.movies-colection-wrapper{
+    display: grid;
+    grid-template-columns: repeat(2 , 1fr);
+    grid-gap: 15px;
+}
+.movie-card{
+    display: flex;
+    border: 1px solid black;
+}
+.movie-card-inf-box{
+    padding-top: 20px;
+}
+.movie-card-img-box{
+    width: 250px;
+}
+.movie-card-img-box img{
+    width: 100%;
+}
