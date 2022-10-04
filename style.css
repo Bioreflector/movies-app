@@ -16,6 +16,9 @@
     padding-top: 20px;
     padding-bottom: 20px;
 }
+.header-title{
+    margin-left: 160px;
+}
 .movies-colection-wrapper{
     display: grid;
     grid-template-columns: repeat(3 , 1fr);
@@ -29,15 +32,15 @@
     border: 1px solid rgba(0, 0, 255, 0.514);
     border-radius: 3px;
     padding: 5px;
-    flex-direction: column;
-    align-items: center;
+    /* flex-direction: column;
+    align-items: center; */
 }
 .movie-card-inf-box{
     padding-top: 20px;
     padding-left: 20px;
 }
 .movie-card-img-box{
-    max-width: 400px;
+    max-width: 200px;
     padding: 10px;
 }
 .movie-card-img-box img{

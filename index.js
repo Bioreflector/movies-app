@@ -4,6 +4,8 @@ const urlForGanres = "https://api.themoviedb.org/3/genre/movie/list"
 const imgurl = "https://image.tmdb.org/t/p/w500/"
 const moviesContainer = document.querySelector('.movies-colection-wrapper')
 const watchListBtn = document.querySelector('.watch-list-btn')
+let watchList = []
+
 watchListBtn.addEventListener('click' , init)
 
 const searchForm = document.searchMovieForm
@@ -15,6 +17,7 @@ async function getSerchedMovies(value){
     const response = await fetch(`https://api.themoviedb.org/3/search/movie${myApiKey}&language=en-US&query=${value}`)
     const movies = await response.json()
     const {results} = movies
+    console.log(results)
     return results
    
 }
@@ -35,6 +38,12 @@ async function getGenres(){
 
 }
 
+function addMovieToWathList(movie){
+    console.log(movie)
+    watchList.push(movie)
+    console.log(watchList)
+}
+
 async function getMovies() {
     const response = await fetch(`https://api.themoviedb.org/3/movie/top_rated${myApiKey}`)
     const movies = await response.json()
@@ -46,7 +55,7 @@ async function init(){
     moviesContainer.classList.remove('show-about-movie')
     const movies = await getMovies()
     const genres = await getGenres()
-    console.log(movies)
+    // console.log(movies)
     rander(movies , genres)
 }
 
@@ -57,15 +66,15 @@ function createMoviCard(movie , genres){
     movieCard.classList.add('movie-card')
     const imgBox = document.createElement('div')
     imgBox.classList.add('movie-card-img-box')
-    imgBox.innerHTML = `<img src ="${imgurl}${movie.backdrop_path}" alt ="movieImg">`
+    imgBox.innerHTML = `<img src ="${imgurl}${movie.poster_path}" alt ="movieImg">`
     movieCard.appendChild(imgBox)
     const infBox = document.createElement('div')
     infBox.classList.add('movie-card-inf-box')
     movieCard.appendChild(infBox)
     const moviTitle = document.createElement('h3')
     moviTitle.innerText = `${movie.title}`
-    moviTitle.addEventListener('click' , ()=> rander(movie , genres))
-    moviTitle.addEventListener('click' , showAboutMovie)
+    moviTitle.addEventListener('click' , ()=> addMovieToWathList(movie))
+    // moviTitle.addEventListener('click' , showAboutMovie)
     infBox.appendChild(moviTitle)
     const movieGanre = document.createElement('div')
     movieCard.classList.add("movie-Ganre")
