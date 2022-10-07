@@ -4,15 +4,18 @@ const urlForGanres = "https://api.themoviedb.org/3/genre/movie/list"
 const imgurl = "https://image.tmdb.org/t/p/w500/"
 const moviesContainer = document.querySelector('.movies-colection-wrapper')
 const watchListBtn = document.querySelector('.watch-list-btn')
-const backBtn = document.querySelector('.back-btn')
-let watchListArray = []
-let genresArray = []
+const homeBtn = document.querySelector('.back-btn')
+let watchListArray = JSON.parse(localStorage.getItem('watchList'))
+if(watchListArray === null){
+    watchListArray = []
+}
 
-watchListBtn.addEventListener('click' , randerWatchList)
-watchListBtn.addEventListener('click' , () => backBtn.classList.add('back-btn-show'))
-backBtn.addEventListener('click', ()=> backBtn.classList.remove('back-btn-show'))
-backBtn.addEventListener('click', init)
+watchListBtn.addEventListener('click' , clickWatchListBtn)
+homeBtn.addEventListener('click', clickHomeBtn)
 
+function saveToMemory() {
+    localStorage.setItem('watchList', JSON.stringify(watchListArray))
+}
 const searchForm = document.searchMovieForm
 const {searchInput , searchBtn} = searchForm
 
@@ -22,9 +25,18 @@ async function getSerchedMovies(value){
     const response = await fetch(`https://api.themoviedb.org/3/search/movie${myApiKey}&language=en-US&query=${value}`)
     const movies = await response.json()
     const {results} = movies
-    console.log(results)
     return results
    
+}
+function clickWatchListBtn(){
+    homeBtn.classList.add('back-btn-show')
+    watchListBtn.classList.add('watch-list-btn-hide')
+    randerWatchList()
+}
+function clickHomeBtn(){
+    homeBtn.classList.remove('back-btn-show')
+    watchListBtn.classList.remove('watch-list-btn-hide')
+    init()
 }
 
 async function showSerchedMovies(event){
@@ -45,9 +57,11 @@ async function getGenres(){
 
 function addMovieToWathList(movie){
     watchListArray.push(movie)
+    saveToMemory()
 }
 function removeMovieFromWatchList(movie){
     watchListArray = watchListArray.filter(item => item.id !== movie.id)
+    saveToMemory()
 }
 function isWatchListContainsMovie(movie){
     return watchListArray.find(watchlistMovie => watchlistMovie.id === movie.id)
@@ -61,7 +75,6 @@ function addOrRemoveMovie(movie){
     addMovieToWathList(movie)
    } 
 }
-
 async function getMovies() {
     const response = await fetch(`https://api.themoviedb.org/3/movie/top_rated${myApiKey}`)
     const movies = await response.json()
@@ -72,46 +85,77 @@ async function getMovies() {
 async function init(){
     const movies = await getMovies()
     const genres = await getGenres()
-    genresArray = genres
+    console.log(movies)
     rander(movies , genres)
 }
 
 
-
-function createMoviCard(movie , genres){
-    const movieCard = document.createElement('div')
-    movieCard.classList.add('movie-card')
+function createImgForMovieCard(movie){
     const imgBox = document.createElement('div')
     imgBox.classList.add('movie-card-img-box')
     imgBox.innerHTML = `<img src ="${imgurl}${movie.poster_path}" alt ="movieImg">`
-    movieCard.appendChild(imgBox)
-    const infBox = document.createElement('div')
-    infBox.classList.add('movie-card-inf-box')
-    movieCard.appendChild(infBox)
+    return imgBox
+}
+function createTitleAndGenreForMovieCard(movie , genres){
+    const container = document.createElement('div')
     const moviTitle = document.createElement('h3')
+    const movieGenre = document.createElement('div')
     moviTitle.innerText = `${movie.title}`
+    const genreArr = selectGenre(movie , genres)
+    movieGenre.innerHTML = `<p>Ganre: ${createGanres(genreArr)}</p>`
+    container.appendChild(moviTitle)
+    container.appendChild(movieGenre)
+    return container
+}
+function createBtnActionForMoviCard(movie){
     const addMovieBtn = document.createElement('button')
     addMovieBtn.innerText = isWatchListContainsMovie(movie) ? 'Remove from Watch List' : 'Add to Watch List'
     addMovieBtn.addEventListener('click', ()=> addOrRemoveMovie(movie))
     addMovieBtn.addEventListener('click', () => renameBtnAddMovie(movie , addMovieBtn))
     addMovieBtn.classList.add('movie-card-btn')
+    return addMovieBtn
+}
+
+function createMoviCard(movie , genres){
+    const movieCard = document.createElement('div')
+    movieCard.classList.add('movie-card')
+    movieCard.appendChild(createImgForMovieCard(movie)) 
+    const infBox = document.createElement('div')
+    infBox.classList.add('movie-card-inf-box')
+    infBox.appendChild(createTitleAndGenreForMovieCard(movie , genres))
+    movieCard.appendChild(infBox)
     const readMoreBtn = document.createElement('button')
-    readMoreBtn.addEventListener('click', ()=> console.log('test'))
+    readMoreBtn.addEventListener('click', () => randerReadeMore(movie , genres))
     readMoreBtn.innerText = 'Read More'
     readMoreBtn.classList.add('movie-card-btn')
-    infBox.appendChild(moviTitle)
-    const movieGanre = document.createElement('div')
-    movieCard.classList.add("movie-Ganre")
-    const genreArr = selectGenre(movie , genres)
-    movieGanre.innerHTML = `<p>Ganre: ${createGanres(genreArr)}</p>`
-    infBox.appendChild(movieGanre)
-    infBox.appendChild(addMovieBtn)
+    infBox.appendChild(createBtnActionForMoviCard(movie))
     infBox.appendChild(readMoreBtn)
     return movieCard
 }
 
-function createMovieReadMoreCard(movie){
-
+function createReadMoreCard(movie ,genres){
+    const movieCard = document.createElement('div')
+    movieCard.classList.add('movie-card')
+    movieCard.appendChild(createImgForMovieCard(movie))
+    const infBox = document.createElement('div')
+    infBox.classList.add('movie-card-inf-box')
+    infBox.appendChild(createTitleAndGenreForMovieCard(movie , genres))
+    const overview = document.createElement('p')
+    overview.innerText = `${movie.overview}`
+    infBox.appendChild(overview)
+    infBox.appendChild(createBtnActionForMoviCard(movie))
+    const backBtn = document.createElement('button')
+    backBtn.classList.add('movie-card-btn')
+    backBtn.innerText = "Go Back"
+    backBtn.addEventListener('click' , init)
+    infBox.appendChild(backBtn)
+    movieCard.appendChild(infBox)
+    return movieCard 
+}
+function randerReadeMore(movie , genres){
+    moviesContainer.innerText = ""
+    moviesContainer.classList.add('show-about-movie')
+    moviesContainer.appendChild(createReadMoreCard(movie , genres))
 }
 
 function renameBtnAddMovie(movie , btn){

@@ -19,6 +19,9 @@
 .header-title{
     margin-left: 160px;
 }
+.watch-list-btn-hide{
+    display: none;
+}
 .movies-colection-wrapper{
     display: grid;
     grid-template-columns: repeat(3 , 1fr);
