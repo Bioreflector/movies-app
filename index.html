@@ -9,22 +9,22 @@
 </head>
 <body>
     <div class="wrapper">
-
         <header class="header">
-            <div>
-                <button class="watch-list-btn">Watch list</button>
-                <button class="back-btn">Go Home</button>
-            </div>
-            <h1 class="header-title">Populyar Movies</h1>
-            <form id="search_movi_form" name="searchMovieForm">
-                <input type="text" name="search" id="searchInput">
-                <button id="searchBtn">search</button>
-            </form>
-                
-            
+            <div class="menu">
+                <ul class="menu-list">
+                    <li><button class="back-btn menu-btn">Go Home</button></li>
+                    <li><button class="watch-list-btn menu-btn">Watch list</button></li>
+                    
+                </ul>
+                <form id="search_movi_form" name="searchMovieForm">
+                    <input type="text" name="search" id="searchInput">
+                    <button id="searchBtn" class="menu-btn">search</button>
+                </form>
+            </div> 
         </header>
 
         <main class="main">
+            <h1 class="title">Populyar Movies</h1> 
             <div class="movies-colection-wrapper">
             </div>
         </main>

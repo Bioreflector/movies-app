@@ -9,6 +9,7 @@ let watchListArray = JSON.parse(localStorage.getItem('watchList'))
 if(watchListArray === null){
     watchListArray = []
 }
+const title = document.querySelector('.title')
 
 watchListBtn.addEventListener('click' , clickWatchListBtn)
 homeBtn.addEventListener('click', clickHomeBtn)
@@ -29,13 +30,11 @@ async function getSerchedMovies(value){
    
 }
 function clickWatchListBtn(){
-    homeBtn.classList.add('back-btn-show')
-    watchListBtn.classList.add('watch-list-btn-hide')
+    title.innerText = "Watch List"
     randerWatchList()
 }
 function clickHomeBtn(){
-    homeBtn.classList.remove('back-btn-show')
-    watchListBtn.classList.remove('watch-list-btn-hide')
+    title.innerText = "Populyar Movies"
     init()
 }
 
@@ -85,7 +84,7 @@ async function getMovies() {
 async function init(){
     const movies = await getMovies()
     const genres = await getGenres()
-    console.log(movies)
+    title.innerText = "Populyar Movies"
     rander(movies , genres)
 }
 
@@ -153,6 +152,7 @@ function createReadMoreCard(movie ,genres){
     return movieCard 
 }
 function randerReadeMore(movie , genres){
+    title.innerText = "About Movie"
     moviesContainer.innerText = ""
     moviesContainer.classList.add('show-about-movie')
     moviesContainer.appendChild(createReadMoreCard(movie , genres))
