@@ -1,5 +1,4 @@
 const myApiKey = "?api_key=0173d6afde5e852201a2850602f70181"
-// const urlForMovies = "https://api.themoviedb.org/3/movie/top_rated"
 const urlForGanres = "https://api.themoviedb.org/3/genre/movie/list"
 const imgurl = "https://image.tmdb.org/t/p/w500/"
 const moviesContainer = document.querySelector('.movies-colection-wrapper')
@@ -10,6 +9,9 @@ if(watchListArray === null){
     watchListArray = []
 }
 const title = document.querySelector('.title')
+let moviesArray = []
+let titleText = ''
+
 
 watchListBtn.addEventListener('click' , clickWatchListBtn)
 homeBtn.addEventListener('click', clickHomeBtn)
@@ -26,26 +28,10 @@ async function getSerchedMovies(value){
     const response = await fetch(`https://api.themoviedb.org/3/search/movie${myApiKey}&language=en-US&query=${value}`)
     const movies = await response.json()
     const {results} = movies
+    moviesArray = results
     return results
    
 }
-function clickWatchListBtn(){
-    title.innerText = "Watch List"
-    randerWatchList()
-}
-function clickHomeBtn(){
-    title.innerText = "Populyar Movies"
-    init()
-}
-
-async function showSerchedMovies(event){
-    event.preventDefault()
-    const value = searchInput.value
-    const movies = await getSerchedMovies(value)
-    const genres = await getGenres()
-    rander(movies , genres)
-}
-
 async function getGenres(){
     const response = await fetch(`${urlForGanres}${myApiKey}`)
     const result = await response.json()
@@ -53,6 +39,33 @@ async function getGenres(){
     return genres
 
 }
+async function getMovies() {
+    const response = await fetch(`https://api.themoviedb.org/3/movie/top_rated${myApiKey}`)
+    const movies = await response.json()
+    const {results} = movies
+    return results
+}
+
+function clickWatchListBtn(){
+    title.innerText = "Watch List"
+    randerWatchList()
+}
+function clickHomeBtn(){
+    title.innerText = titleText
+    init()
+}
+
+async function showSerchedMovies(event){
+    event.preventDefault()
+    titleText = 'Serched Movies'
+    title.innerText = titleText
+    const value = searchInput.value
+    const movies = await getSerchedMovies(value)
+    const genres = await getGenres()
+    rander(movies , genres)
+}
+
+
 
 function addMovieToWathList(movie){
     watchListArray.push(movie)
@@ -74,19 +87,17 @@ function addOrRemoveMovie(movie){
     addMovieToWathList(movie)
    } 
 }
-async function getMovies() {
-    const response = await fetch(`https://api.themoviedb.org/3/movie/top_rated${myApiKey}`)
-    const movies = await response.json()
-    const {results} = movies
-    return results
-}
+
 
 async function init(){
     const movies = await getMovies()
     const genres = await getGenres()
-    title.innerText = "Populyar Movies"
+    titleText = 'Populyar Movies'
+    title.innerText = titleText
+    moviesArray = movies
     rander(movies , genres)
 }
+
 
 
 function createImgForMovieCard(movie){
@@ -146,11 +157,16 @@ function createReadMoreCard(movie ,genres){
     const backBtn = document.createElement('button')
     backBtn.classList.add('movie-card-btn')
     backBtn.innerText = "Go Back"
-    backBtn.addEventListener('click' , init)
+    backBtn.addEventListener('click' , ()=> goBack(genres))
     infBox.appendChild(backBtn)
     movieCard.appendChild(infBox)
     return movieCard 
 }
+function goBack(genres){
+    title.innerText = titleText
+    rander(moviesArray , genres)
+}
+
 function randerReadeMore(movie , genres){
     title.innerText = "About Movie"
     moviesContainer.innerText = ""
